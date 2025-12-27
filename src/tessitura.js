@@ -65,9 +65,10 @@ export async function getPerformances() {
   return data.map(e => {
     const startDate = new Date(e.PerformanceDate);
 
+    const parsedDuration = Number(e.Duration);
     const durationMinutes =
-      e.Duration != null && e.Duration > 0
-        ? e.Duration
+      Number.isFinite(parsedDuration) && parsedDuration > 0
+        ? parsedDuration
         : defaultDuration;
 
     return {
