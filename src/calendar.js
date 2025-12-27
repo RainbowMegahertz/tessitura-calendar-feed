@@ -17,7 +17,7 @@ export function buildCalendar(events) {
     calendar.createEvent({
       id: event.id,
       summary: event.title,
-      start: new Date(event.end),
+      start: new Date(event.start),
       end: new Date(event.end)
     });
   });

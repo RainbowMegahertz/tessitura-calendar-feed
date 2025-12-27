@@ -62,10 +62,19 @@ export async function getPerformances() {
   // End date/time is calculated with Duration from Tessitura. If Duration is not provided, use the default duration instead
   const data = await response.json();
 
-  return data.map(e => ({
-    id: `perf-${e.PerformanceId}@${domainName}`,
-    title: e.PerformanceDescription,
-    start: new Date(e.PerformanceDate),
-    end: new Date(e.PerformanceDate).setMinutes(new Date(e.PerformanceDate).getMinutes() + (e.Duration ? e.Duration : defaultDuration))
-  }));
+  return data.map(e => {
+    const startDate = new Date(e.PerformanceDate);
+
+    const durationMinutes =
+      e.Duration != null && e.Duration > 0
+        ? e.Duration
+        : defaultDuration;
+
+    return {
+        id: `perf-${e.PerformanceId}@${domainName}`,
+        title: e.PerformanceDescription,
+        start: new Date(e.PerformanceDate),
+        end: new Date(startDate.getTime() + durationMinutes * 60000)
+        }
+    });
 }
