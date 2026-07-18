@@ -13,6 +13,7 @@ export function getOptions(event = {}) {
     includePlanSteps: params.includePlanSteps != null ? parseBoolean(params.includePlanSteps) : false,
     includePerformances: params.includePerformances != null ? parseBoolean(params.includePerformances) : false,
     daysBack: params.daysBack != null ? Number(params.daysBack) : 30,
+    daysForward: params.daysForward != null ? Number(params.daysForward) : 180,
 
     //Plan steps
     workerId: params.workerId != null ? params.workerId : "0",

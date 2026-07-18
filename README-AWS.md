@@ -4,12 +4,6 @@ This guide walks through deploying the Tessitura Calendar Feed to AWS Lambda, st
 
 No prior AWS experience is assumed.
 
-## Prerequisites
-
-- A GitHub clone of this repository
-- Node.js 24.x or newer installed locally
-- An AWS account (free tier is sufficient)
-
 ## Step 1: Create an AWS Account
 
 1. Go to <https://aws.amazon.com>
@@ -31,44 +25,18 @@ No prior AWS experience is assumed.
 
 1. Open your Lambda function
 2. Go to **Configuration → Environment variables**
-3. Add the following variables:
-
-| Key | Value |
-| ---- | ------ |
-| `CRM_BASE_URL` | Your Tessitura API base URL |
-| `CRM_AUTH_TOKEN` | Your authentication token |
-
-Save changes.
+3. Add the variables described in [Environmental Variables](README.md#environmental-variables)
+4. Save changes
 
 ## Step 4: Prepare the Deployment Package
 
-Lambda requires a ZIP file that includes:
+Select the files and folders listed below and combine them into a ZIP file.
 
-- Source files
-- `node_modules`
-- `package.json`
-
-### Build the package locally
-
-```bash
-npm install --omit=dev
-```
-
-Ensure your project folder contains:
-
-1. lambda.js
-2. src/
-3. node_modules/
-4. package.json
-
-### Create the ZIP file
-
-On Windows or macOS:
-
-1. Select the files and folders listed above
-2. Use your file explorer’s Compress / Zip feature
-
-Do not use PowerShell Compress-Archive, as it may produce invalid folder structures for Lambda.
+1. index.js
+2. package.json
+3. src/
+4. node_modules/
+5. config/
 
 ## Step 5: Upload Code to Lambda
 
@@ -77,13 +45,7 @@ Do not use PowerShell Compress-Archive, as it may produce invalid folder structu
 3. Upload your ZIP file
 4. Save
 
-## Step 6: Set the Handler and Timeout
-
-### Handler
-
-Go to Code > Runtime settings > Edit. Ensure the handler is set to **lambda.handler**
-
-### Timeout
+## Step 6: Set the Timeout
 
 1. Go to Configuration → General configuration
 2. Set timeout to 30 seconds
@@ -101,38 +63,4 @@ Go to Code > Runtime settings > Edit. Ensure the handler is set to **lambda.hand
 
 5. Create the API
 
-AWS will generate a public URL similar to:
-
-```bash
-https://xxxxxxxx.execute-api.region.amazonaws.com
-```
-
-## Step 8: Test the Calendar Feed
-
-1. Append your route (for example): /feed.ics
-2. Open the full URL in a browser or add it to a calendar client as a subscription.
-
-You should receive a valid .ics file.
-
-## Step 9: Subscribe in Calendar Clients
-
-Most calendar applications support subscription URLs:
-
-- Google Calendar: Settings → Add calendar → From URL
-- Outlook: Add calendar → Subscribe from web
-- Apple Calendar: File → New Calendar Subscription
-
-Once subscribed, the calendar will refresh automatically based on the client’s polling interval.
-
-## Operational Notes
-
-- Lambda logs are available in CloudWatch Logs
-- API Gateway returns generic errors; CloudWatch is the source of truth
-- Calendar clients may cache aggressively — updates may not appear immediately
-- Consider rate limiting or caching if CRM traffic is a concern
-
-## Cleanup and Cost Control
-
-- Free tier is sufficient for most low-volume feeds
-- Delete unused Lambda functions and APIs to avoid charges
-- Monitor usage via AWS Billing → Cost Explorer
+AWS will generate a public URL similar to: `https://abc123.execute-api.us-east-1.amazonaws.com/default/tessitura-calendar-feed/`

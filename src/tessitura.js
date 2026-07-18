@@ -120,7 +120,7 @@ export async function getPlanSteps(options) {
     return {
       id: e.Id,
       description: e.Description,
-      constituentName: "Default name", //e.Constituent.DisplayName
+      constituentName: e.Constituent?.DisplayName ?? "Default name", //e.Constituent.DisplayName
       dueDate,
       lastModified: lastModifiedSource,
       stepTypeDescription: e.Type.Description,

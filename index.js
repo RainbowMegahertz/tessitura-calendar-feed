@@ -32,13 +32,13 @@ export async function handler(event) {
     if (options.includePerformances) {
       let performances = await getPerformances(options);
       //console.log(JSON.stringify(performances, null, 2));
-      calendarText = buildCalendar(calendarText, performances, "performances");
+      calendarText = buildCalendar(calendarText, performances, "performances", options, config.calendar.domain);
     }
 
     // If includePlanSteps is true, fetch plan steps and build the calendar
     if (options.includePlanSteps) {
       let planSteps = await getPlanSteps(options);
-      calendarText = buildCalendar(calendarText, planSteps, "planSteps");
+      calendarText = buildCalendar(calendarText, planSteps, "planSteps", options, config.calendar.domain);
     }
 
     return {

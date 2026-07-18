@@ -17,12 +17,23 @@ export function startCalendar(companyName, calendarName) {
 }
 
 // Function to build iCal calendar from Tessitura events
-export function buildCalendar(calendar, events, type) {
-  const domainHost = process.env.COMPANY_DOMAIN;
+export function buildCalendar(calendar, events, type, options, domainHost) {
+  const daysBack = options.daysBack;
+  const daysForward = options.daysForward;
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - daysBack);
+
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() + daysForward);
   
   // Add each event supplied from Tessitura to the calendar
   if(type === "performances") {
     events.forEach(event => {
+      if (event.start < startDate || event.start > endDate) {
+        return; // Skip events outside the specified date range
+      }
+
       calendar.createEvent({
         id: `perf-${event.id}@${domainHost}`,
         summary: event.title,
@@ -32,6 +43,10 @@ export function buildCalendar(calendar, events, type) {
     });
   } else if (type === "planSteps") {
     events.forEach(event => {
+      if (event.dueDate < startDate || event.dueDate > endDate) {
+        return; // Skip events outside the specified date range
+      }
+
       const end = new Date(event.dueDate);
       end.setDate(end.getDate() + 1); // Make end date the day after due date for all-day event
       
@@ -67,4 +82,3 @@ export function buildCalendar(calendar, events, type) {
   //Output the calendar
   return calendar;
 }
-

@@ -8,7 +8,7 @@ The application is implemented in Node.js and is designed to run as a lightweigh
 
 ### What this does
 
-- Pulls event and/or worker step data from a Tessitura API endpoint
+- Pulls event and/or worker step data from a Tessitura API
 - Normalizes that data into calendar events
 - Serves standards-compliant iCalendar (`.ics`) feeds
 
@@ -19,7 +19,7 @@ The application is implemented in Node.js and is designed to run as a lightweigh
 
 ## 📄 Key files
 
-### `index.js`
+**`index.js`**
 
 - Entry point for the application
 - Acts as the HTTP handler 
@@ -28,20 +28,20 @@ The application is implemented in Node.js and is designed to run as a lightweigh
   2. Generate an iCalendar feed
   3. Return the `.ics` response
 
-### `src/tessitura.js`
+**`src/tessitura.js`**
 
 - Interfaces with Tessitura API
 - Normalizes CRM event data into a predictable internal format
 
-### `src/calendar.js`
+**`src/calendar.js`**
 
 - Converts normalized event data into an iCalendar feed
 
-### `config/config.json`
+**`config/config.json`**
 
 - Holds project-wide defaults, including organization info
 
-### `package.json`
+**`package.json`**
 
 - Defines project metadata
 - Declares required dependencies
@@ -49,6 +49,7 @@ The application is implemented in Node.js and is designed to run as a lightweigh
 
 ## 🤝 Dependencies
 
+- **Tessitura v16**
 - **Node.js** (24.x or newer recommended)
   - Includes native `fetch`, so no HTTP client library is required
 - **ical-generator**
@@ -63,27 +64,78 @@ The application is implemented in Node.js and is designed to run as a lightweigh
 
 3. Update settings in `config/config.json` as desired.
 
-4. Follow the instructions in [README-AWS.md](README-AWS.md) to deploy to AWS Lambda.
+4. Create a user and user group in Tessitura for the integration.
+
+    - It's easiest to do this in Prod first and then copy down to other environments.
+
+    - The user group will need the following service rights permissions:
+
+        - (ADD/GET) `/Finance/Workers/Steps`
+
+        - (ADD/POST) `/TXN/Performances/Search` (this endpoint is read only but uses the POST verb)
+
+    - Generate an authentication string with the credentials you made: Take the `userID:userGroupID:machineLocation:password` string and base64 enacode it.
+
+5. Follow the instructions in [README-AWS.md](README-AWS.md) to deploy to AWS Lambda.
+
+## 📆 Usage
+
+1. Build URLs to your calendar service.
+
+    - Start with the base URL you created during installation, e.g. `https://abc123.execute-api.us-east-1.amazonaws.com/default/tessitura-calendar-feed/`
+
+    - Add URL parameters to define the kinds of events you want in the feed. `includePerformances=true` and/or `includePlanSteps=true` must be included to return any data. See [URL Parameters](#url-parameters) for details.
+
+2. Optional: Load your URL in a browser or Postman to vaidate the results. This is helpful because calendar programs cache feeds and often don't have a refresh option.
+
+3. Subscribe to the feed in your calendar program.
 
 ## ⚙️ Configuration Options
 
 ### Environmental Variables
 
-| Key | Value | Required |
+| Key | Definition | Required |
 | ---- | ------ | ---- |
 | `CRM_BASE_URL` | Your Tessitura API base URL | Yes |
 | `CRM_AUTH_TOKEN` | Hashed token (user ID, user group ID, location, password) for Basic Authentication header | Yes |
-| `ENV_NAME` | The name of the environment e.g. Test, Prod. When supplied, this is appended to event names. | No |
+| `ENV_NAME` | The name of the environment e.g. Test, Prod. Optional; when supplied, this is appended to event names. | No |
 
-Example .env file (for local development)
+### `config.json` file
 
-### `config.json` 
-
-| Key | Type | Value |
+| Key | Type | Definition |
 | ---- | ------ | ---- |
 | calendar.name | String | The name of your ical feed. |
 | calendar.domain | String | Your organization's website domain e.g. example.org. Used for generating unique IDs that calendar programs use to manage changes. |
 | calendar.companyName | String | The name of your organization, used as the publisher name for the calendar feed. |
+
+### URL Parameters
+
+#### Global
+
+Either `includePerformances=true` or `includePlanSteps=true` (or both) must be included to return any data in the feed.
+
+| Parameters | Definition | Example |
+| ---- | ------ | ---- |
+| `includePerformances` | Controls whether performance data is included. | `true`, `false` |
+| `includePlanSteps` | Controls whether worker plan step data is included. | `true`, `false` |
+| `daysBack` | Number of days in the past to fetch data. Defaults to 30 if not supplied. | `7` |
+| `daysForward` | Number of days in the future to fetch data. Defaults to 180 if not supplied. | `360` |
+
+#### Performances
+
+| Parameters | Definition | Example |
+| ---- | ------ | ---- |
+| `defaultDuration` | For performances without a Duration set, this value is used to determine the duration and end time. Defined in minutes. Defaults to 60 if not supplied. | `120` |
+| `KeywordIds` | A comma-delimited list of keyword IDs that limits the performances returned. A performance only needs to have one of the keywords to be returned. | `5,7` |
+| `PerformanceTypeIds` | A comma-delimited list of performance type IDs that limits the performances returned. | `12,18,20` |
+
+#### Worker Plan Steps
+
+| Parameters | Definition | Example |
+| ---- | ------ | ---- |
+| `workerId` | The constituent ID of the worker whose plan steps should be fetched. | `76543` |
+| `includeCompleted` | Whether plan steps marked Completed should be included. | `true`, `false` |
+| `includeManagedUsers` | Whether to include plan steps from users managed by the worker. | `true`, `false` |
 
 ## License and Reuse
 
