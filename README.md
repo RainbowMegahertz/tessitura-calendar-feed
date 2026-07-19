@@ -4,7 +4,9 @@ This project publishes public, subscribable calendar feeds (`.ics`) based on per
 
 The application is implemented in Node.js and is designed to run as a lightweight serverless function. These instructions assume you are using AWS Lambda, but other options can be used too.
 
-## 💡 Overview
+See [README-Install.md](README-Install.md) for installation instructions.
+
+## 💡 Project Overview
 
 ### What this does
 
@@ -22,7 +24,7 @@ The application is implemented in Node.js and is designed to run as a lightweigh
 **`index.js`**
 
 - Entry point for the application
-- Acts as the HTTP handler 
+- Acts as the HTTP handler
 - Orchestrates the workflow:
   1. Fetch events from the CRM
   2. Generate an iCalendar feed
@@ -55,28 +57,6 @@ The application is implemented in Node.js and is designed to run as a lightweigh
 - **ical-generator**
   - Used to generate standards-compliant `.ics` calendar output  
   - <https://www.npmjs.com/package/ical-generator>
-
-## 🏗️ Installation
-
-1. Clone this repo locally.
-
-2. Use `npm` to install the `ical-generator` library in the repo.
-
-3. Update settings in `config/config.json` as desired.
-
-4. Create a user and user group in Tessitura for the integration.
-
-    - It's easiest to do this in Prod first and then copy down to other environments.
-
-    - The user group will need the following service rights permissions:
-
-        - (ADD/GET) `/Finance/Workers/Steps`
-
-        - (ADD/POST) `/TXN/Performances/Search` (this endpoint is read only but uses the POST verb)
-
-    - Generate an authentication string with the credentials you made: Take the `userID:userGroupID:machineLocation:password` string and base64 enacode it.
-
-5. Follow the instructions in [README-AWS.md](README-AWS.md) to deploy to AWS Lambda.
 
 ## 📆 Usage
 

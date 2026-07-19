@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 // Load configuration from environment variables
 const baseUrl = process.env.CRM_BASE_URL;
 const authToken = process.env.CRM_AUTH_TOKEN;
@@ -120,12 +117,12 @@ export async function getPlanSteps(options) {
     return {
       id: e.Id,
       description: e.Description,
-      constituentName: e.Constituent?.DisplayName ?? "Default name", //e.Constituent.DisplayName
+      constituentName: e.Constituent?.DisplayName ?? e.Plan?.Constituent?.DisplayName ?? e.Issue?.Constituent?.DisplayName ?? "Unknown", 
       dueDate,
       lastModified: lastModifiedSource,
       stepTypeDescription: e.Type.Description,
       notes: e.Notes,
-      url: `${baseUrl.replace(/\/$/, '')}/Step/${e.Id}` //url/tessitura/#/crm/constituents/35130/plansteps/108/edit
+      url: '' //Not working: `${baseUrl.replace(/\/$/, '')}/Step/${e.Id}` //url/tessitura/#/crm/constituents/35130/plansteps/108/edit
     };
   });
 }

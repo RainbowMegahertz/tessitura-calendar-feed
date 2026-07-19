@@ -44,7 +44,8 @@ export async function handler(event) {
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'text/calendar; charset=utf-8'
+        'Content-Type': 'text/calendar; charset=utf-8',
+        'Content-Disposition': 'attachment; filename="calendar.ics"'
       },
       body: calendarText.toString()
     };
