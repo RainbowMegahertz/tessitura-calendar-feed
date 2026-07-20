@@ -22,23 +22,19 @@ export async function handler(event) {
 
     let envName = process.env.ENV_NAME ?? '';
 
-    // Set the company name and calendar name, and start the calendar
-    let companyName = config.calendar.companyName ?? 'DefaultCompanyName'; //process.env.COMPANY_NAME != null ? process.env.COMPANY_NAME : 'DefaultCompanyName'; // Replace with your company name, no spaces in string allowed
-    let calendarName = config.calendar.name ?? 'Tessitura Events Calendar'; //process.env.CALENDAR_NAME != null ? process.env.CALENDAR_NAME : 'Tessitura Events Calendar'; // Name of the calendar
-
-    let calendarText = startCalendar(companyName, calendarName);
+    let calendarText = startCalendar();
 
     // If includePerformances is true, fetch performances and build the calendar
     if (options.includePerformances) {
       let performances = await getPerformances(options);
       //console.log(JSON.stringify(performances, null, 2));
-      calendarText = buildCalendar(calendarText, performances, "performances", options, config.calendar.domain);
+      calendarText = buildCalendar(calendarText, performances, "perf", options);
     }
 
     // If includePlanSteps is true, fetch plan steps and build the calendar
     if (options.includePlanSteps) {
       let planSteps = await getPlanSteps(options);
-      calendarText = buildCalendar(calendarText, planSteps, "planSteps", options, config.calendar.domain);
+      calendarText = buildCalendar(calendarText, planSteps, "step", options);
     }
 
     return {

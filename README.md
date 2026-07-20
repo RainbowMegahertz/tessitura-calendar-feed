@@ -70,6 +70,21 @@ See [README-Install.md](README-Install.md) for installation instructions.
 
 3. Subscribe to the feed in your calendar program.
 
+## 💻 Calendar Event Data
+
+| Calendar Field | Performance | Step |
+| --- | --- | --- |
+| Title | Performance description | Step description (constituent name) |
+| Start date | Performance date | Due date |
+| Start time | Performance time, unless it's all day | n/a (always shown as an all day event) |
+| End date | Calculated from perf date + duration, unless it's all day | n/a |
+| End time | Calcualted from perf time + duration, unless it's all day | n/a |
+| All day indicator | Marked as dall day depending on perf types in config file | Always shown as all day |
+| Event body text | Perf code, Facility name, sales notes, URL | Step type description, constituent name, step notes, URL |
+| Priority | All marked as default/medium priority | Based on step priortiy |
+| Busy status | Busy, unless all day | Free |
+| URL | Link to performance in House View | Link to step detail page |
+
 ## ⚙️ Configuration Options
 
 ### Environmental Variables
@@ -87,6 +102,7 @@ See [README-Install.md](README-Install.md) for installation instructions.
 | calendar.name | String | The name of your ical feed. |
 | calendar.domain | String | Your organization's website domain e.g. example.org. Used for generating unique IDs that calendar programs use to manage changes. |
 | calendar.companyName | String | The name of your organization, used as the publisher name for the calendar feed. |
+| tessitura.allDayPerformanceTypes | Array | A list of performance type ID values that should be treated as all day events, such as for admissions. |
 
 ### URL Parameters
 
