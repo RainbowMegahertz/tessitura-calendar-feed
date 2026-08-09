@@ -20,8 +20,6 @@ export async function handler(event) {
       throw new Error('CRM_BASE_URL or CRM_AUTH_TOKEN not set');
     }
 
-    let envName = process.env.ENV_NAME ?? '';
-
     let calendarText = startCalendar();
 
     // If includePerformances is true, fetch performances and build the calendar

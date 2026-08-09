@@ -8,6 +8,7 @@ const config = JSON.parse(
 // Load configuration from environment variables
 const baseUrl = process.env.CRM_BASE_URL;
 const authToken = process.env.CRM_AUTH_TOKEN;
+const envName = process.env.ENV_NAME != undefined && process.env.ENV_NAME != '' ? process.env.ENV_NAME + ': ' : '';
 
 // Common headers for Tessitura API requests
 let tessituraHeaders = {
@@ -108,7 +109,7 @@ export async function getPerformances(options) {
 
     return {
         id: e.PerformanceId,
-        title: e.PerformanceDescription,
+        title: envName + e.PerformanceDescription,
         start: startDateTime,
         end: endDateTime,
         allDay: allDay,
@@ -157,7 +158,7 @@ export async function getPlanSteps(options) {
 
     return {
       id: e.Id,
-      title: e.Description,
+      title: envName + e.Description,
       start: dueDate,
       constituent: e.Constituent?.DisplayName ?? e.Plan?.Constituent?.DisplayName ?? e.Issue?.Constituent?.DisplayName ?? "Unknown", 
       lastModified: lastModifiedSource,

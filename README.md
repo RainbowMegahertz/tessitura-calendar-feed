@@ -93,7 +93,7 @@ See [README-Install.md](README-Install.md) for installation instructions.
 | ---- | ------ | ---- |
 | `CRM_BASE_URL` | Your Tessitura API base URL | Yes |
 | `CRM_AUTH_TOKEN` | Hashed token (user ID, user group ID, location, password) for Basic Authentication header | Yes |
-| `ENV_NAME` | The name of the environment e.g. Test, Prod. Optional; when supplied, this is appended to event names. | No |
+| `ENV_NAME` | The name of the environment e.g. Test, Prod. Optional; when supplied, this is prepended to event names. | No |
 
 ### `config.json` file
 
