@@ -64,7 +64,7 @@ See [README-Install.md](README-Install.md) for installation instructions.
 
     - Start with the base URL you created during installation, e.g. `https://abc123.execute-api.us-east-1.amazonaws.com/default/tessitura-calendar-feed/`
 
-    - Add URL parameters to define the kinds of events you want in the feed. `includePerformances=true` and/or `includePlanSteps=true` must be included to return any data. See [URL Parameters](#url-parameters) for details.
+    - Add URL parameters to define the kinds of events you want in the feed. `includePerformances=true` and/or `includeSteps=true` must be included to return any data. See [URL Parameters](#url-parameters) for details.
 
 2. Optional: Load your URL in a browser or Postman to vaidate the results. This is helpful because calendar programs cache feeds and often don't have a refresh option.
 
@@ -108,12 +108,12 @@ See [README-Install.md](README-Install.md) for installation instructions.
 
 #### Global
 
-Either `includePerformances=true` or `includePlanSteps=true` (or both) must be included to return any data in the feed.
+Either `includePerformances=true` or `includeSteps=true` (or both) must be included to return any data in the feed.
 
 | Parameters | Definition | Example |
 | ---- | ------ | ---- |
 | `includePerformances` | Controls whether performance data is included. | `true`, `false` |
-| `includePlanSteps` | Controls whether worker plan step data is included. | `true`, `false` |
+| `includeSteps` | Controls whether worker plan step data is included. | `true`, `false` |
 | `daysBack` | Number of days in the past to fetch data. Defaults to 30 if not supplied. | `7` |
 | `daysForward` | Number of days in the future to fetch data. Defaults to 180 if not supplied. | `360` |
 
@@ -122,8 +122,8 @@ Either `includePerformances=true` or `includePlanSteps=true` (or both) must be i
 | Parameters | Definition | Example |
 | ---- | ------ | ---- |
 | `defaultDuration` | For performances without a Duration set, this value is used to determine the duration and end time. Defined in minutes. Defaults to 60 if not supplied. | `120` |
-| `KeywordIds` | A comma-delimited list of keyword IDs that limits the performances returned. A performance only needs to have one of the keywords to be returned. | `5,7` |
-| `PerformanceTypeIds` | A comma-delimited list of performance type IDs that limits the performances returned. | `12,18,20` |
+| `keywordIds` | A comma-delimited list of keyword IDs that limits the performances returned. A performance only needs to have one of the keywords to be returned. | `5,7` |
+| `performanceTypeIds` | A comma-delimited list of performance type IDs that limits the performances returned. | `12,18,20` |
 
 #### Worker Plan Steps
 

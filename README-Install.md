@@ -28,7 +28,7 @@ Create a user and user group in Tessitura for the integration.
 
   - (ADD/GET) `/Finance/Workers/Steps`
 
-  - (ADD/POST) `/TXN/Performances/Search` (this endpoint is read only but uses the POST verb)
+  - (ADD/POST, VIEW/GET) `/TXN/Performances/Search` (the POST verb is read only for this endpoint)
 
 - Generate an authentication string with the credentials you made: Take the `userID:userGroupID:machineLocation:password` string and base64 enacode it.
 

@@ -1,17 +1,12 @@
 import { getOptions } from './src/options.js';
 import { getPerformances } from './src/tessitura.js';
-import { getPlanSteps } from './src/tessitura.js';
+import { getSteps } from './src/tessitura.js';
 import { startCalendar } from './src/calendar.js';
 import { buildCalendar } from './src/calendar.js';
 import { readFile } from "node:fs/promises";
 
 export async function handler(event) {
   try {
-    //Retrieve config values 
-    const config = JSON.parse(
-      await readFile(new URL("./config/config.json", import.meta.url))
-    );
-
     //Retrieve options from query parameters
     const options = getOptions(event);
 
@@ -25,21 +20,21 @@ export async function handler(event) {
     // If includePerformances is true, fetch performances and build the calendar
     if (options.includePerformances) {
       let performances = await getPerformances(options);
-      //console.log(JSON.stringify(performances, null, 2));
       calendarText = buildCalendar(calendarText, performances, "perf", options);
     }
 
-    // If includePlanSteps is true, fetch plan steps and build the calendar
-    if (options.includePlanSteps) {
-      let planSteps = await getPlanSteps(options);
-      calendarText = buildCalendar(calendarText, planSteps, "step", options);
+    // If includeSteps is true, fetch plan steps and build the calendar
+    if (options.includeSteps) {
+      let steps = await getSteps(options);
+      calendarText = buildCalendar(calendarText, steps, "step", options);
     }
 
+    // Return the calendar as a downloadable .ics file
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'text/calendar; charset=utf-8',
-        'Content-Disposition': 'attachment; filename="calendar.ics"'
+        'Content-Disposition': 'attachment; filename="feed.ics"'
       },
       body: calendarText.toString()
     };

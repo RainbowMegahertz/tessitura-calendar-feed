@@ -17,22 +17,16 @@ let tessituraHeaders = {
   'Authorization': `Basic ${authToken}`
 };
 
-// Helper function to truncate text to a maximum length
-function truncate(text, maxLength = 4000) {
-  if (!text) return '';
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength - 3) + '...';
-}
-
-async function getPerformance(performanceId) {
+// Function to fetch detailed performance information from Tessitura CRM for a given performance ID
+async function getPerformanceDetails(performanceId) {
   const detailResponse = await fetch(`${baseUrl}/TXN/Performances/${performanceId}`, {
     method: 'GET',
     headers: tessituraHeaders
   });
 
   if (!detailResponse.ok) {
-  const detailText = await detailResponse.text();
-  throw new Error(`Tessitura API error (${detailResponse.status}): ${detailText}`);
+    const detailText = await detailResponse.text();
+    throw new Error(`Tessitura API error (${detailResponse.status}): ${detailText}`);
   }
 
   return await detailResponse.json();
@@ -56,13 +50,13 @@ export async function getPerformances(options) {
   };
   
   // If there are performance type filters, add them to the request body
-  if(options.PerformanceTypeIds != "") {
-    requestBody.PerformanceTypeIds = options.PerformanceTypeIds;
+  if(options.performanceTypeIds != "") {
+    requestBody.performanceTypeIds = options.performanceTypeIds;
   }
 
   // If there are keyword filters, add them to the request body
-  if(options.KeywordIds != "") {
-    requestBody.KeywordIds = options.KeywordIds;
+  if(options.keywordIds != "") {
+    requestBody.keywordIds = options.keywordIds;
     requestBody.KeywordAndOr = "Or";
   }
 
@@ -81,14 +75,15 @@ export async function getPerformances(options) {
     );
   }
 
-  // End date/time is calculated with Duration from Tessitura. If Duration is not provided, use the default duration instead
   const data = await searchResponse.json();
 
   return data.map(e => {
-    const perfDetails = getPerformance(e.PerformanceId);
+    // Fetch detailed performance information for each performance
+    const perfDetails = getPerformanceDetails(e.PerformanceId);
     
     let startDateTime = new Date(e.PerformanceDate);
 
+    // Calculate the end date and time based on the performance duration or default duration
     const parsedDuration = Number(e.Duration);
     const durationMinutes =
       Number.isFinite(parsedDuration) && parsedDuration > 0
@@ -99,11 +94,11 @@ export async function getPerformances(options) {
 
     let allDay = false;
 
+    // If the performance type is in the allDayPerformanceTypes list, set the start time to midnight and the end time to the next day
     if (config.tessitura.allDayPerformanceTypes.includes(e.PerformanceType.Id.toString())) {
-      // If the performance type is in the allDayPerformanceTypes list, set the start time to midnight and the end time to the next day
       startDateTime.setHours(0, 0, 0, 0);
       endDateTime = new Date(startDateTime);
-      endDateTime.setDate(endDateTime.getDate() + 1); // Make end date the day after performance date for all-day event
+      endDateTime.setDate(endDateTime.getDate() + 1); // Make end date the day after performance date for all-day events
       allDay = true;
     }
 
@@ -113,16 +108,17 @@ export async function getPerformances(options) {
         start: startDateTime,
         end: endDateTime,
         allDay: allDay,
-        lastModified: perfDetails.UpdatedDateTime || perfDetails.CreatedDateTime
-        //notes
-        //url
+        lastModified: perfDetails.UpdatedDateTime || perfDetails.CreatedDateTime,
+        notes: '', //todo: populate notes
+        url: ''//todo: populate url
         }
     });
 }
 
 // Function to fetch plan steps from Tessitura CRM
-export async function getPlanSteps(options) {
+export async function getSteps(options) {
 
+  // Validate that the workerId is provided
   if (!options.workerId) {
     throw new Error('workerConstituentId is required');
   }
@@ -130,8 +126,8 @@ export async function getPlanSteps(options) {
   const params = new URLSearchParams();
   params.append('workerConstituentId', options.workerId);
   params.append('showAllSteps', 'false');
-  params.append('includeCompletedSteps', 'false');
-  params.append('includeManagedUsers', 'false');
+  params.append('includeCompletedSteps', options.includeCompleted ? 'true' : 'false');
+  params.append('includeManagedUsers', options.includeManagedUsers ? 'true' : 'false');
 
   const response = await fetch(
     `${baseUrl}/Finance/Workers/Steps?${params.toString()}`,
@@ -149,6 +145,7 @@ export async function getPlanSteps(options) {
   let data = await response.json();
 
   return data.map(e => {
+    // Convert DueDateTime to a Date object and set the time to midnight for all-day events
     const dueDate = new Date(e.DueDateTime);
     dueDate.setHours(0, 0, 0, 0);
 
@@ -165,7 +162,7 @@ export async function getPlanSteps(options) {
       step: e.Type.Description,
       notes: e.Notes,
       priority: e.Priority?.Id ?? 2, // Default to medium priority if not specified
-      url: '' //Not working: `${baseUrl.replace(/\/$/, '')}/Step/${e.Id}` //url/tessitura/#/crm/constituents/35130/plansteps/108/edit
+      url: '' //Not working: `${baseUrl.replace(/\/$/, '')}/Step/${e.Id}` 
     };
   });
 }

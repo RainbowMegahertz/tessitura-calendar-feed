@@ -26,7 +26,7 @@ export function startCalendar() {
   return calendar;
 }
 
-// Function to build iCal calendar from Tessitura events
+// Function to add iCal events to calendar from Tessitura events
 export function buildCalendar(calendar, events, type, options) {
   const daysBack = options.daysBack;
   const daysForward = options.daysForward;
@@ -50,7 +50,7 @@ export function buildCalendar(calendar, events, type, options) {
         start: new Date(event.start),
         end: new Date(event.end),
         allDay: event.allDay,
-        lastModified: null, //event.lastModified,
+        lastModified: event.lastModified,
         description: '',
         url: '',
         busystatus: event.allDay ? 'FREE' : 'BUSY',
