@@ -6,7 +6,8 @@ const config = JSON.parse(
 );
 
 // Load configuration from environment variables
-const baseUrl = process.env.CRM_BASE_URL;
+let baseUrl = process.env.CRM_BASE_URL;
+baseUrl = baseUrl.replace(/\/$/, ''); // Remove trailing slash if present
 const authToken = process.env.CRM_AUTH_TOKEN;
 const envName = process.env.ENV_NAME != undefined && process.env.ENV_NAME != '' ? process.env.ENV_NAME + ': ' : '';
 
@@ -110,7 +111,7 @@ export async function getPerformances(options) {
         allDay: allDay,
         lastModified: perfDetails.UpdatedDateTime || perfDetails.CreatedDateTime,
         notes: '', //todo: populate notes
-        url: ''//todo: populate url
+        url: `${baseUrl.replace('/tessitura/api', '/tessitura/#')}/ticketing/products/house-view/${e.PerformanceId}/details`
         }
     });
 }
@@ -153,6 +154,32 @@ export async function getSteps(options) {
       e.UpdatedDateTime ||
       e.CreatedDateTime;
 
+    let stepCategory = "constituent";
+
+    if (e.Plan != null) {
+      stepCategory = "plan";
+    }
+
+    if (e.Issue != null) {
+      stepCategory = "issue";
+    }
+
+    let url = '';
+
+    switch (stepCategory) {
+      case 'constituent':
+        url = `${baseUrl.replace('/tessitura/api', '/tessitura/#')}/crm/constituents/${e.Constituent.Id}/constituentsteps/${e.Id}/edit`;
+        break;
+      case 'plan':
+        url = `${baseUrl.replace('/tessitura/api', '/tessitura/#')}/crm/constituents/${e.Plan.Constituent.Id}/plansteps/${e.Id}/edit`;
+        break;
+      case 'issue':
+        url = `${baseUrl.replace('/tessitura/api', '/tessitura/#')}/crm/constituents/${e.Issue.Constituent.Id}/issuesteps/${e.Id}/edit`;
+        break;
+      default:
+        url = '';
+    }
+
     return {
       id: e.Id,
       title: envName + e.Description,
@@ -162,7 +189,8 @@ export async function getSteps(options) {
       step: e.Type.Description,
       notes: e.Notes,
       priority: e.Priority?.Id ?? 2, // Default to medium priority if not specified
-      url: '' //Not working: `${baseUrl.replace(/\/$/, '')}/Step/${e.Id}` 
+      stepCategory: stepCategory,
+      url: url
     };
   });
 }

@@ -51,8 +51,8 @@ export function buildCalendar(calendar, events, type, options) {
         end: new Date(event.end),
         allDay: event.allDay,
         lastModified: event.lastModified,
-        description: '',
-        url: '',
+        description: event.url ? `More info: ${event.url}` : '',
+        url: event.url,
         busystatus: event.allDay ? 'FREE' : 'BUSY',
         priority: 5
       });
